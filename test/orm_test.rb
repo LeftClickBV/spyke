@@ -14,6 +14,21 @@ module Spyke
       assert_equal 'Bob', user.name
     end
 
+    def test_multifind
+      endpoint = stub_request(:get, 'http://sushi.com/recipes?id[]=1&id[]=2').to_return_json(result: [{ id: 1, title: 'Sushi' }, { id: 2, title: 'Sashimi' }])
+
+      recipes = Recipe.find(1, 2)
+
+      assert_equal 1, recipes.first.id
+      assert_equal 2, recipes.last.id
+      assert_requested endpoint
+
+      recipes = Recipe.find([1, 2])
+
+      assert_equal 1, recipes.first.id
+      assert_equal 2, recipes.last.id
+    end
+
     def test_reload
       stub_request(:get, 'http://sushi.com/recipes/1').to_return_json(result: { id: 1, title: 'Sushi' })
 

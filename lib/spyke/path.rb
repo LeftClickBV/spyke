@@ -4,6 +4,8 @@ require 'spyke/rfc_converter'
 module Spyke
   class InvalidPathError < StandardError; end
   class Path
+    attr_reader :pattern, :params
+
     def initialize(pattern, params = {})
       @pattern = pattern
       @params = params.symbolize_keys

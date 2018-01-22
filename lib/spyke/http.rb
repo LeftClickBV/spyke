@@ -57,6 +57,12 @@ module Spyke
 
         def scoped_request(method)
           uri = new.uri
+          if current_scope.params.has_key? primary_key and
+             current_scope.params[primary_key].is_a? Array and
+             current_scope.params[primary_key].length > 1
+            new_pattern = uri.pattern.sub(/\/\(:#{primary_key}\)/, '')
+            uri = Spyke::Path.new(new_pattern, uri.params)
+          end
           params = current_scope.params.except(*uri.variables)
           request(method, uri, params)
         end

@@ -25,9 +25,17 @@ module Spyke
         callback_methods[callback]
       end
 
-      def find(id)
-        raise ResourceNotFound if id.blank?
-        where(primary_key => id).find_one || raise(ResourceNotFound)
+      def find(*args)
+        args = args.flatten.compact.uniq
+
+        case args.size
+        when 0
+          raise ResourceNotFound
+        when 1
+          where(primary_key => args.first).find_one || raise(ResourceNotFound)
+        else
+          where(primary_key => args).find_some
+        end
       end
 
       def fetch
